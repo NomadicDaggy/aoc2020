@@ -25,7 +25,7 @@ func ReadInts(r io.Reader) ([]int, error) {
 }
 
 func main() {
-	fptr := flag.String("fpath", "example", "read input file")
+	fptr := flag.String("fpath", "input", "read input file")
 	flag.Parse()
 
 	f, err := os.Open(*fptr)
@@ -39,5 +39,11 @@ func main() {
 	}()
 
 	ints, err := ReadInts(f)
-	fmt.Println(ints, err)
+	for iIndex, i := range ints {
+		for jIndex := iIndex; jIndex < len(ints); jIndex++ {
+			if j := ints[jIndex]; i+j == 2020 {
+				fmt.Println(i * j)
+			}
+		}
+	}
 }

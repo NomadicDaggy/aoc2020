@@ -24,8 +24,19 @@ func ReadInts(r io.Reader) ([]int, error) {
 	return result, scanner.Err()
 }
 
+func FindTwo(ints []int) int {
+	for iIndex, i := range ints {
+		for jIndex := iIndex; jIndex < len(ints); jIndex++ {
+			if j := ints[jIndex]; i+j == 2020 {
+				return i * j
+			}
+		}
+	}
+	return 0
+}
+
 func main() {
-	fptr := flag.String("fpath", "input", "read input file")
+	fptr := flag.String("fpath", "example", "read input file")
 	flag.Parse()
 
 	f, err := os.Open(*fptr)
@@ -39,11 +50,5 @@ func main() {
 	}()
 
 	ints, err := ReadInts(f)
-	for iIndex, i := range ints {
-		for jIndex := iIndex; jIndex < len(ints); jIndex++ {
-			if j := ints[jIndex]; i+j == 2020 {
-				fmt.Println(i * j)
-			}
-		}
-	}
+	fmt.Println(FindTwo(ints))
 }

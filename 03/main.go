@@ -29,20 +29,32 @@ func countTrees(right int, down int, treeMap []string) int {
 	for {
 		x += right
 		y += down
-		if x > xLastIndex {
-			x -= xLastIndex + 1
-		}
 		if y > yLastIndex {
 			break
+		}
+		if x > xLastIndex {
+			x -= xLastIndex + 1
 		}
 		if treeMap[y][x] == []byte("#")[0] {
 			treeCount++
 		}
+		// fmt.Println(y, x, treeMap[y][x])
 	}
 	return treeCount
 }
 
 func main() {
 	lines, _ := readLines("input")
-	fmt.Println(countTrees(3, 1, lines))
+	anglesToCheck := [5][2]int{
+		{1, 1},
+		{3, 1},
+		{5, 1},
+		{7, 1},
+		{1, 2},
+	}
+	treesCumulative := 1
+	for _, angle := range anglesToCheck {
+		treesCumulative *= countTrees(angle[0], angle[1], lines)
+	}
+	fmt.Println(treesCumulative)
 }

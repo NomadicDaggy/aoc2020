@@ -31,6 +31,22 @@ func IsPasswordValid(s string) bool {
 	return charCounter >= lowerBound
 }
 
+func IsNewPasswordValid(s string) bool {
+	parts := strings.Split(s, ": ")
+	password := parts[1]
+	prefixParts := strings.Split(parts[0], " ")
+	char := []byte(prefixParts[1])[0]
+	indexParts := strings.Split(prefixParts[0], "-")
+	lowerIndex, _ := strconv.Atoi(indexParts[0])
+	upperIndex, _ := strconv.Atoi(indexParts[1])
+
+	// for the requirement to hold, one char has to match and must not
+	if (password[lowerIndex-1] == char) != (password[upperIndex-1] == char) {
+		return true
+	}
+	return false
+}
+
 func main() {
 	fptr := flag.String("fpath", "input", "read input file")
 	flag.Parse()
@@ -52,7 +68,7 @@ func main() {
 		if err == io.EOF {
 			break
 		}
-		if IsPasswordValid(string(line)) {
+		if IsNewPasswordValid(string(line)) {
 			correctPasswords++
 		}
 	}

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 )
 
 func readLines(path string) ([]string, error) {
@@ -37,7 +38,6 @@ func binarySeek(lowSymb rune, highSymb rune, lowThresh int, highThresh int, boar
 		} else {
 			return -1
 		}
-		//fmt.Println(lowThresh, highThresh)
 	}
 	return highThresh
 }
@@ -45,20 +45,29 @@ func binarySeek(lowSymb rune, highSymb rune, lowThresh int, highThresh int, boar
 func getSeatID(boardingPass string) int {
 	row := binarySeek('F', 'B', 0, 127, boardingPass[:7])
 	col := binarySeek('L', 'R', 0, 7, boardingPass[7:])
-	//fmt.Println(boardingPass, boardingPass[:7], boardingPass[7:], row, col)
 	return row*8 + col
 }
 
 func main() {
 	lines, _ := readLines("input")
 	highestID := 0
+	var seatIDS []int
 	for _, boardingPass := range lines {
-		//fmt.Println("")
 		id := getSeatID(boardingPass)
-		//fmt.Println(id)
+		seatIDS = append(seatIDS, id)
 		if id > highestID {
 			highestID = id
 		}
 	}
 	fmt.Println(highestID)
+
+	sort.Ints(seatIDS)
+	lastSeat := seatIDS[0] - 1
+	for _, seat := range seatIDS {
+		if seat-lastSeat != 1 {
+			fmt.Println(seat - 1)
+			break
+		}
+		lastSeat = seat
+	}
 }

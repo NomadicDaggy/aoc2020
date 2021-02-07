@@ -23,8 +23,7 @@ func readLines(path string) ([]string, error) {
 	return lines, scanner.Err()
 }
 
-func main() {
-	lines, _ := readLines("example")
+func parseLines(lines []string) map[string](map[string]int) {
 	outerMap := make(map[string](map[string]int))
 	for _, line := range lines {
 		line := strings.ReplaceAll(line, "bags", "")
@@ -48,5 +47,12 @@ func main() {
 		}
 		outerMap[outerKey] = innerMap
 	}
-	fmt.Println(outerMap)
+	return outerMap
+}
+
+func main() {
+	lines, _ := readLines("example")
+	bagContentsMap := parseLines(lines)
+
+	fmt.Println(bagContentsMap)
 }

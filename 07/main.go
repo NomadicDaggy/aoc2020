@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"gonum.org/v1/gonum/graph/simple"
 )
 
 func readLines(path string) ([]string, error) {
@@ -53,6 +55,48 @@ func parseLines(lines []string) map[string](map[string]int) {
 func main() {
 	lines, _ := readLines("example")
 	bagContentsMap := parseLines(lines)
+	// fmt.Println(bagContentsMap)
+	// fmt.Println("")
 
-	fmt.Println(bagContentsMap)
+	graph := simple.NewDirectedGraph()
+	bagColorToNodeID := make(map[string]int64)
+	for parentBagColor, innerMap := range bagContentsMap {
+		colorID, exists := bagColorToNodeID[parentBagColor]
+		parentNode := graph.NewNode()
+		if !exists {
+			bagColorToNodeID[parentBagColor] = parentNode.ID()
+			graph.AddNode(parentNode)
+		} else {
+			parentNode = graph.Node(colorID)
+		}
+
+		for childBagColor, numContains := range innerMap {
+			if numContains > 0 {
+				childNode := graph.NewNode()
+				childColorID, childExists := bagColorToNodeID[childBagColor]
+				if !childExists {
+					bagColorToNodeID[childBagColor] = childNode.ID()
+					// No need to explicitly add child node as setting the edge
+					// will add it automatically
+				} else {
+					childNode = graph.Node(childColorID)
+				}
+				edge := graph.NewEdge(parentNode, childNode)
+				graph.SetEdge(edge)
+			}
+		}
+	}
+	shinyGoldID := bagColorToNodeID["shiny gold"]
+	leadsToShinyGold := make(map[string]bool)
+	for color, nodeID := range bagColorToNodeID {
+		if nodeID == shinyGoldID {
+			continue
+		}
+		if graph.HasEdgeFromTo(nodeID, shinyGoldID) {
+			leadsToShinyGold[color] = true
+		}
+	}
+	fmt.Println(leadsToShinyGold)
+
+	// TODO: https://pkg.go.dev/gonum.org/v1/gonum@v0.8.2/graph/path
 }

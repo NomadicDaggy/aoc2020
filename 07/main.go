@@ -51,9 +51,22 @@ func parseLines(lines []string) map[string](map[string]int) {
 	return outerMap
 }
 
+func bagCountInColor(color string, bagContentsMap map[string](map[string]int), total int) int {
+	bagContents := bagContentsMap[color]
+	for childColor, count := range bagContents {
+		total += count
+		if childColor == "no other" {
+			continue
+		}
+		total += count * bagCountInColor(childColor, bagContentsMap, 0)
+	}
+	return total
+}
+
 func main() {
 	lines, _ := readLines("input")
 	bagContentsMap := parseLines(lines)
+	// Build a directed graph
 	graph := simple.NewDirectedGraph()
 	bagColorToNodeID := make(map[string]int64)
 	for parentBagColor, innerMap := range bagContentsMap {
@@ -81,6 +94,13 @@ func main() {
 			}
 		}
 	}
+
+	// How many individual bags must be inside a shiny golden bag?
+	total := 0
+	bagsInsideShinyGolden := bagCountInColor("shiny gold", bagContentsMap, total)
+	fmt.Println(bagsInsideShinyGolden, " bags inside shiny gold")
+
+	// How many colors can eventually contain a shiny golden bag?
 	shinyGoldID := bagColorToNodeID["shiny gold"]
 	shinyGoldNode := graph.Node(shinyGoldID)
 	counter := 0
@@ -91,5 +111,5 @@ func main() {
 			counter++
 		}
 	}
-	fmt.Println(counter)
+	fmt.Println(counter, " different colors that can contain shiny gold")
 }

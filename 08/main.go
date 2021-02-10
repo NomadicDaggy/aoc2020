@@ -67,9 +67,6 @@ func main() {
 		i, acc = processInstruction(lines[i], acc, i)
 	}
 	// determine broken instruction (08b)
-	// holds line indexes from which there is no path out of the boot code
-	// blacklist := make(map[int]bool)
-
 	// Search backwards through original path
 	endIndex := len(lines)
 	for j := len(instructionOrder) - 1; j > 0; j-- {
@@ -97,7 +94,7 @@ func main() {
 		linesVisited := make(map[int]bool)
 		for {
 			if i == endIndex {
-				fmt.Println(acc)
+				fmt.Println(acc, " :finished with swapped instruction")
 				return
 			} else if _, ok := linesVisited[i]; ok {
 				break
